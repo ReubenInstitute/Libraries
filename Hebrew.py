@@ -403,6 +403,23 @@ def add_dagesh_hazzak(text):
 		result.append(base + ''.join(modifiers))
 	return ''.join(result)
 
+def add_sheva_na(text):
+	text = normalize(text)
+	blocks = regex.findall(r'\P{M}\p{M}*', text, regex.UNICODE)
+	result = []
+	previous_base = None
+	for block in blocks:
+		base = block[0]
+		modifiers = list(block[1:])
+		if base in ALL_LETTER_CHARS and previous_base not in ALL_LETTER_CHARS:
+			sheva_count = modifiers.count(SHEVA)
+			if sheva_count == 1:
+				modifiers.append(SHEVA)
+				modifiers.sort(key=lambda c: COMBINING_ORDER.index(c) if c in COMBINING_ORDER else len(COMBINING_ORDER))
+		result.append(base + ''.join(modifiers))
+		previous_base = base
+	return ''.join(result)
+
 def strip_punctuation(text):
 	text = re.sub(r'[\,\.\!\?\:\;\-–—…\'\"]', '', text)
 	text = re.sub(r" +", " ", text)
